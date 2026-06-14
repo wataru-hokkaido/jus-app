@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JUSアプリ</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -12,12 +13,12 @@
     background: #0f1f35;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 20px;
   }
 
-  /* ログイン画面 */
   .login-wrap {
     width: 100%;
     max-width: 360px;
@@ -227,6 +228,64 @@
     border-color: #4a9eda;
     color: #a8c4e0;
   }
+
+  /* DigiYoshi ブランドフッター */
+  .brand-footer {
+    margin-top: 40px;
+    text-align: center;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .brand-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .brand-line::before,
+  .brand-line::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: #00e5ff;
+    opacity: 0.3;
+  }
+
+  .brand-dot {
+    width: 6px;
+    height: 6px;
+    background: #00e5ff;
+    opacity: 0.5;
+  }
+
+  .brand-powered {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: #00e5ff;
+    letter-spacing: 3px;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+
+  .brand-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: #00e5ff;
+    letter-spacing: 2px;
+  }
+
+  .brand-inc {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    color: #7ecfff;
+    letter-spacing: 5px;
+    margin-top: 2px;
+    opacity: 0.8;
+  }
 </style>
 </head>
 <body>
@@ -281,6 +340,16 @@
   <button class="logout-btn" onclick="logout()">ログアウト</button>
 </div>
 
+<!-- DigiYoshi ブランドフッター -->
+<div class="brand-footer">
+  <div class="brand-line">
+    <div class="brand-dot"></div>
+  </div>
+  <div class="brand-powered">POWERED BY</div>
+  <div class="brand-name">DigiYoshi Works</div>
+  <div class="brand-inc">I N C .</div>
+</div>
+
 <script>
   const PASSWORD = "JUS2525";
 
@@ -303,7 +372,6 @@
     document.getElementById('passwordInput').value = '';
   }
 
-  // セッション維持
   if (sessionStorage.getItem('auth') === 'true') {
     document.getElementById('loginWrap').style.display = 'none';
     document.getElementById('menuWrap').style.display = 'block';
