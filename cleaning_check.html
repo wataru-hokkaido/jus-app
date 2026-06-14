@@ -240,13 +240,16 @@
     border: 1px solid #e2e8f0;
   }
 
-  /* 登録ボタン */
+  /* フッターボタン */
   .footer {
     background: white;
     border: 1px solid #e2e8f0;
     border-top: none;
     border-radius: 0 0 12px 12px;
     padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .submit-btn {
@@ -268,7 +271,28 @@
     background: #2e6da4;
   }
 
-  /* モーダル */
+  .cancel-btn {
+    width: 100%;
+    padding: 13px;
+    background: transparent;
+    color: #94a3b8;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .cancel-btn:hover {
+    border-color: #e53e3e;
+    color: #e53e3e;
+    background: #fef2f2;
+  }
+
+  /* モーダル共通 */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -341,6 +365,11 @@
     color: white;
   }
 
+  .modal-btn.danger {
+    background: #dc2626;
+    color: white;
+  }
+
   /* 完了モーダル */
   .done-modal .modal-icon { font-size: 48px; }
   .done-modal h2 { color: #16a34a; }
@@ -382,25 +411,34 @@
     <div class="field">
       <label>車号<span class="required">*</span></label>
       <div class="sharigo-row">
-        <select id="sharigo1">
-          <option value="">-</option>
-          <option>1</option><option>2</option><option>3</option>
-          <option>4</option><option>5</option><option>6</option>
-          <option>7</option><option>8</option><option>9</option>
+        <select id="sharigo1" onchange="updateSharigo2()">
+          <option value="">系統を選択</option>
+          <option value="721">721系</option>
+          <option value="733">733系</option>
+          <option value="735">735系</option>
         </select>
         <span class="sharigo-sep">−</span>
         <select id="sharigo2">
-          <option value="">-</option>
-          <option>1</option><option>2</option><option>3</option>
-          <option>4</option><option>5</option><option>6</option>
-          <option>7</option><option>8</option><option>9</option>
+          <option value="">番号を選択</option>
+          <option value="101">101</option>
+          <option value="102">102</option>
+          <option value="103">103</option>
+          <option value="104">104</option>
+          <option value="105">105</option>
         </select>
       </div>
     </div>
 
     <div class="field">
       <label>確認者<span class="required">*</span></label>
-      <input type="text" id="checker" placeholder="氏名を入力">
+      <select id="checker">
+        <option value="">確認者を選択</option>
+        <option value="皇帝ヨシハラー">皇帝ヨシハラー</option>
+        <option value="きゃまーん">きゃまーん</option>
+        <option value="タケ">タケ</option>
+        <option value="新兵亮太">新兵亮太</option>
+        <option value="片岡系楠美未満のマッツ">片岡系楠美未満のマッツ</option>
+      </select>
     </div>
   </div>
 
@@ -448,11 +486,12 @@
 
   <div class="footer">
     <button class="submit-btn" onclick="openConfirm()">登録する</button>
+    <button class="cancel-btn" onclick="openCancel()">作成中止</button>
   </div>
 
 </div>
 
-<!-- 確認モーダル -->
+<!-- 登録確認モーダル -->
 <div class="modal-overlay" id="confirmModal">
   <div class="modal">
     <div class="modal-icon">📋</div>
@@ -461,6 +500,19 @@
     <div class="modal-buttons">
       <button class="modal-btn cancel" onclick="closeConfirm()">いいえ</button>
       <button class="modal-btn confirm" onclick="doRegister()">はい</button>
+    </div>
+  </div>
+</div>
+
+<!-- 作成中止確認モーダル -->
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <h2>作成を中止しますか？</h2>
+    <p>入力内容はすべて破棄されます。<br>よろしいですか？</p>
+    <div class="modal-buttons">
+      <button class="modal-btn cancel" onclick="closeCancelModal()">戻る</button>
+      <button class="modal-btn danger" onclick="goTop()">中止する</button>
     </div>
   </div>
 </div>
@@ -478,19 +530,20 @@
 <script>
   const statusValues = { wall: null, floor: null, window: null };
 
-  // 今日の日付をセット
   const today = new Date();
   const y = today.getFullYear();
   const m = String(today.getMonth() + 1).padStart(2, '0');
   const d = String(today.getDate()).padStart(2, '0');
   document.getElementById('date').value = `${y}年${m}月${d}日`;
 
+  function updateSharigo2() {
+    // 系統が変わっても番号はそのまま（共通なのでリセット不要）
+  }
+
   function setStatus(field, value) {
     statusValues[field] = value;
     const group = event.target.closest('.status-group');
-    group.querySelectorAll('.status-btn').forEach(btn => {
-      btn.classList.remove('active');
-    });
+    group.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
   }
 
@@ -509,24 +562,22 @@
   }
 
   function openConfirm() {
-    // バリデーション
     const s1 = document.getElementById('sharigo1').value;
     const s2 = document.getElementById('sharigo2').value;
-    const checker = document.getElementById('checker').value.trim();
+    const checker = document.getElementById('checker').value;
 
     if (!s1 || !s2) {
       alert('車号を選択してください。');
       return;
     }
     if (!checker) {
-      alert('確認者を入力してください。');
+      alert('確認者を選択してください。');
       return;
     }
     if (!statusValues.wall || !statusValues.floor || !statusValues.window) {
       alert('壁・床・窓の状態をすべて選択してください。');
       return;
     }
-
     document.getElementById('confirmModal').classList.add('show');
   }
 
@@ -534,7 +585,19 @@
     document.getElementById('confirmModal').classList.remove('show');
   }
 
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwfWGj2PQOHYsW2bEFXLS7VASImoPc25RnUiRMgFMZ3Lr6V5dj28SgCYFvY5iA58cR0sQ/exec";
+  function openCancel() {
+    document.getElementById('cancelModal').classList.add('show');
+  }
+
+  function closeCancelModal() {
+    document.getElementById('cancelModal').classList.remove('show');
+  }
+
+  function goTop() {
+    window.location.href = 'index.html';
+  }
+
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbx6nIBCbfc__ueCvz_JkvlK3qAe2DM42z17Js2ilWlRYofoKkuaSv7t3E5p8RKNeTJF/exec";
 
   async function doRegister() {
     closeConfirm();
@@ -542,7 +605,7 @@
     const data = {
       date: document.getElementById('date').value,
       sharigo: document.getElementById('sharigo1').value + '-' + document.getElementById('sharigo2').value,
-      checker: document.getElementById('checker').value.trim(),
+      checker: document.getElementById('checker').value,
       wall: statusValues.wall === 'good' ? '良' : '否',
       floor: statusValues.floor === 'good' ? '良' : '否',
       window: statusValues.window === 'good' ? '良' : '否',
@@ -565,6 +628,7 @@
 
   function closeDone() {
     document.getElementById('doneModal').classList.remove('show');
+    window.location.href = 'index.html';
   }
 </script>
 
