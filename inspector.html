@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>インスペクターメニュー</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Hiragino Sans", "Meiryo", sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  header {
+    background: #1a3a5c;
+    color: white;
+    border-radius: 12px 12px 0 0;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-icon {
+    width: 40px;
+    height: 40px;
+    background: #2e6da4;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  header p {
+    font-size: 12px;
+    color: #a8c4e0;
+    margin-top: 2px;
+  }
+
+  .card {
+    background: white;
+    padding: 24px;
+    border-left: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+  }
+
+  .card + .card {
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #2e6da4;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8f0f8;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  .field:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+  }
+
+  .required {
+    color: #e53e3e;
+    margin-left: 3px;
+  }
+
+  input[type="text"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    color: #1e293b;
+    background: #f8fafc;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input[type="text"]:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #2e6da4;
+    background: white;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 72px;
+  }
+
+  .sharigo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sharigo-row select {
+    flex: 1;
+  }
+
+  .sharigo-sep {
+    font-size: 20px;
+    color: #94a3b8;
+    font-weight: 300;
+  }
+
+  /* 汚損ブロック */
+  .damage-block {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .damage-block:last-child {
+    margin-bottom: 0;
+  }
+
+  .damage-num {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2e6da4;
+    margin-bottom: 10px;
+  }
+
+  .damage-block textarea {
+    margin-bottom: 10px;
+    min-height: 60px;
+  }
+
+  .photo-btn {
+    width: 100%;
+    padding: 10px;
+    border: 1.5px solid #2e6da4;
+    border-radius: 8px;
+    background: white;
+    color: #2e6da4;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+
+  .photo-btn:hover {
+    background: #f0f7ff;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .photo-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .photo-thumb {
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+
+  .photo-thumb img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .photo-thumb .remove-btn {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .photo-count {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 6px;
+  }
+
+  /* 清掃指示ブロック */
+  .instruction-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .instruction-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .instruction-num {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    min-width: 20px;
+  }
+
+  .instruction-row select {
+    flex: 1;
+  }
+
+  /* フッター */
+  .footer {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: #1a3a5c;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+  }
+
+  .submit-btn:hover {
+    background: #2e6da4;
+  }
+
+  .cancel-btn {
+    width: 100%;
+    padding: 13px;
+    background: transparent;
+    color: #94a3b8;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .cancel-btn:hover {
+    border-color: #e53e3e;
+    color: #e53e3e;
+    background: #fef2f2;
+  }
+
+  /* モーダル */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.show {
+    display: flex;
+  }
+
+  .modal {
+    background: white;
+    border-radius: 14px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+  }
+
+  .modal-icon { font-size: 36px; margin-bottom: 12px; }
+  .modal h2 { font-size: 17px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+  .modal p { font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.5; }
+
+  .modal-buttons { display: flex; gap: 10px; }
+
+  .modal-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+
+  .modal-btn:hover { opacity: 0.85; }
+  .modal-btn.cancel { background: #f1f5f9; color: #64748b; }
+  .modal-btn.confirm { background: #1a3a5c; color: white; }
+  .modal-btn.danger { background: #dc2626; color: white; }
+
+  .done-modal .modal-icon { font-size: 48px; }
+  .done-modal h2 { color: #16a34a; }
+
+  .done-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: #1a3a5c;
+    color: white;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="header-icon">🔍</div>
+    <div>
+      <h1>インスペクターメニュー</h1>
+      <p>車両状態の確認・清掃指示を記録</p>
+    </div>
+  </header>
+
+  <!-- 基本情報 -->
+  <div class="card">
+    <div class="section-label">基本情報</div>
+
+    <div class="field">
+      <label>日付</label>
+      <input type="text" id="date" readonly style="background:#f1f5f9; color:#64748b;">
+    </div>
+
+    <div class="field">
+      <label>車号<span class="required">*</span></label>
+      <div class="sharigo-row">
+        <select id="sharigo1">
+          <option value="">系統を選択</option>
+          <option value="721">721系</option>
+          <option value="733">733系</option>
+          <option value="735">735系</option>
+        </select>
+        <span class="sharigo-sep">−</span>
+        <select id="sharigo2">
+          <option value="">番号を選択</option>
+          <option value="101">101</option>
+          <option value="102">102</option>
+          <option value="103">103</option>
+          <option value="104">104</option>
+          <option value="105">105</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>確認者<span class="required">*</span></label>
+      <select id="checker">
+        <option value="">確認者を選択</option>
+        <option value="皇帝ヨシハラー">皇帝ヨシハラー</option>
+        <option value="きゃまーん">きゃまーん</option>
+        <option value="タケ">タケ</option>
+        <option value="新兵亮太">新兵亮太</option>
+        <option value="片岡系楠美未満のマッツ">片岡系楠美未満のマッツ</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 汚損状態 -->
+  <div class="card">
+    <div class="section-label">汚損状態</div>
+
+    <div class="damage-block">
+      <div class="damage-num">汚損 1</div>
+      <textarea id="damage1" placeholder="汚損内容を入力してください"></textarea>
+      <button class="photo-btn" onclick="triggerPhoto(1)">📷 写真を追加（最大3枚）</button>
+      <input type="file" id="photo1" accept="image/*" capture="environment" multiple onchange="addPhotos(1, event)">
+      <div class="photo-preview" id="preview1"></div>
+      <div class="photo-count" id="count1"></div>
+    </div>
+
+    <div class="damage-block">
+      <div class="damage-num">汚損 2</div>
+      <textarea id="damage2" placeholder="汚損内容を入力してください"></textarea>
+      <button class="photo-btn" onclick="triggerPhoto(2)">📷 写真を追加（最大3枚）</button>
+      <input type="file" id="photo2" accept="image/*" capture="environment" multiple onchange="addPhotos(2, event)">
+      <div class="photo-preview" id="preview2"></div>
+      <div class="photo-count" id="count2"></div>
+    </div>
+
+    <div class="damage-block">
+      <div class="damage-num">汚損 3</div>
+      <textarea id="damage3" placeholder="汚損内容を入力してください"></textarea>
+      <button class="photo-btn" onclick="triggerPhoto(3)">📷 写真を追加（最大3枚）</button>
+      <input type="file" id="photo3" accept="image/*" capture="environment" multiple onchange="addPhotos(3, event)">
+      <div class="photo-preview" id="preview3"></div>
+      <div class="photo-count" id="count3"></div>
+    </div>
+  </div>
+
+  <!-- 清掃指示 -->
+  <div class="card">
+    <div class="section-label">清掃指示</div>
+
+    <div class="instruction-row">
+      <div class="instruction-num">1</div>
+      <select id="inst1">
+        <option value="">選択してください</option>
+        <option value="壁A">壁A</option>
+        <option value="壁B">壁B</option>
+        <option value="床A">床A</option>
+        <option value="床B">床B</option>
+        <option value="天井">天井</option>
+        <option value="手稲SPL">手稲SPL</option>
+        <option value="苗穂SPL">苗穂SPL</option>
+      </select>
+    </div>
+
+    <div class="instruction-row">
+      <div class="instruction-num">2</div>
+      <select id="inst2">
+        <option value="">選択してください</option>
+        <option value="壁A">壁A</option>
+        <option value="壁B">壁B</option>
+        <option value="床A">床A</option>
+        <option value="床B">床B</option>
+        <option value="天井">天井</option>
+        <option value="手稲SPL">手稲SPL</option>
+        <option value="苗穂SPL">苗穂SPL</option>
+      </select>
+    </div>
+
+    <div class="instruction-row">
+      <div class="instruction-num">3</div>
+      <select id="inst3">
+        <option value="">選択してください</option>
+        <option value="壁A">壁A</option>
+        <option value="壁B">壁B</option>
+        <option value="床A">床A</option>
+        <option value="床B">床B</option>
+        <option value="天井">天井</option>
+        <option value="手稲SPL">手稲SPL</option>
+        <option value="苗穂SPL">苗穂SPL</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- その他伝達事項 -->
+  <div class="card">
+    <div class="section-label">その他伝達事項</div>
+    <textarea id="note" placeholder="伝達事項を入力してください" style="min-height:88px;"></textarea>
+  </div>
+
+  <div class="footer">
+    <button class="submit-btn" onclick="openConfirm()">登録する</button>
+    <button class="cancel-btn" onclick="openCancel()">作成中止</button>
+  </div>
+
+</div>
+
+<!-- 登録確認モーダル -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <div class="modal-icon">📋</div>
+    <h2>登録しますか？</h2>
+    <p>入力内容を登録します。<br>よろしいですか？</p>
+    <div class="modal-buttons">
+      <button class="modal-btn cancel" onclick="closeConfirm()">いいえ</button>
+      <button class="modal-btn confirm" onclick="doRegister()">はい</button>
+    </div>
+  </div>
+</div>
+
+<!-- 作成中止確認モーダル -->
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <h2>作成を中止しますか？</h2>
+    <p>入力内容はすべて破棄されます。<br>よろしいですか？</p>
+    <div class="modal-buttons">
+      <button class="modal-btn cancel" onclick="closeCancelModal()">戻る</button>
+      <button class="modal-btn danger" onclick="goTop()">中止する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 完了モーダル -->
+<div class="modal-overlay" id="doneModal">
+  <div class="modal done-modal">
+    <div class="modal-icon">✅</div>
+    <h2>登録しました</h2>
+    <p>インスペクター記録の登録が<br>完了しました。</p>
+    <button class="done-btn" onclick="closeDone()">閉じる</button>
+  </div>
+</div>
+
+<script>
+  const photoData = { 1: [], 2: [], 3: [] };
+
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth() + 1).padStart(2, '0');
+  const d = String(today.getDate()).padStart(2, '0');
+  document.getElementById('date').value = `${y}年${m}月${d}日`;
+
+  function triggerPhoto(num) {
+    if (photoData[num].length >= 3) {
+      alert('写真は最大3枚までです。');
+      return;
+    }
+    document.getElementById('photo' + num).click();
+  }
+
+  function addPhotos(num, event) {
+    const files = Array.from(event.target.files);
+    const remaining = 3 - photoData[num].length;
+    const toAdd = files.slice(0, remaining);
+
+    toAdd.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        photoData[num].push(e.target.result);
+        renderPhotos(num);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    if (files.length > remaining) {
+      alert('3枚を超える分は追加されませんでした。');
+    }
+    event.target.value = '';
+  }
+
+  function renderPhotos(num) {
+    const preview = document.getElementById('preview' + num);
+    const count = document.getElementById('count' + num);
+    preview.innerHTML = '';
+    photoData[num].forEach((src, i) => {
+      const thumb = document.createElement('div');
+      thumb.className = 'photo-thumb';
+      thumb.innerHTML = `
+        <img src="${src}">
+        <button class="remove-btn" onclick="removePhoto(${num}, ${i})">×</button>
+      `;
+      preview.appendChild(thumb);
+    });
+    count.textContent = photoData[num].length > 0 ? `${photoData[num].length} / 3枚` : '';
+  }
+
+  function removePhoto(num, index) {
+    photoData[num].splice(index, 1);
+    renderPhotos(num);
+  }
+
+  function openConfirm() {
+    const s1 = document.getElementById('sharigo1').value;
+    const s2 = document.getElementById('sharigo2').value;
+    const checker = document.getElementById('checker').value;
+
+    if (!s1 || !s2) { alert('車号を選択してください。'); return; }
+    if (!checker) { alert('確認者を選択してください。'); return; }
+
+    document.getElementById('confirmModal').classList.add('show');
+  }
+
+  function closeConfirm() {
+    document.getElementById('confirmModal').classList.remove('show');
+  }
+
+  function openCancel() {
+    document.getElementById('cancelModal').classList.add('show');
+  }
+
+  function closeCancelModal() {
+    document.getElementById('cancelModal').classList.remove('show');
+  }
+
+  function goTop() {
+    window.location.href = 'index.html';
+  }
+
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbx6nIBCbfc__ueCvz_JkvlK3qAe2DM42z17Js2ilWlRYofoKkuaSv7t3E5p8RKNeTJF/exec";
+
+  async function doRegister() {
+    closeConfirm();
+
+    const data = {
+      type: 'inspector',
+      date: document.getElementById('date').value,
+      sharigo: document.getElementById('sharigo1').value + '-' + document.getElementById('sharigo2').value,
+      checker: document.getElementById('checker').value,
+      damage1: document.getElementById('damage1').value.trim(),
+      damage2: document.getElementById('damage2').value.trim(),
+      damage3: document.getElementById('damage3').value.trim(),
+      photo1count: photoData[1].length,
+      photo2count: photoData[2].length,
+      photo3count: photoData[3].length,
+      inst1: document.getElementById('inst1').value,
+      inst2: document.getElementById('inst2').value,
+      inst3: document.getElementById('inst3').value,
+      note: document.getElementById('note').value.trim(),
+    };
+
+    try {
+      await fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+    } catch(e) {
+      console.log(e);
+    }
+
+    document.getElementById('doneModal').classList.add('show');
+  }
+
+  function closeDone() {
+    document.getElementById('doneModal').classList.remove('show');
+    window.location.href = 'index.html';
+  }
+</script>
+
+</body>
+</html>
