@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>車両清掃チェックシート</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Hiragino Sans", "Meiryo", sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  header {
+    background: #1a3a5c;
+    color: white;
+    border-radius: 12px 12px 0 0;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-icon {
+    width: 40px;
+    height: 40px;
+    background: #2e6da4;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  header p {
+    font-size: 12px;
+    color: #a8c4e0;
+    margin-top: 2px;
+  }
+
+  .card {
+    background: white;
+    padding: 24px;
+    border-left: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+  }
+
+  .card + .card {
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #2e6da4;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8f0f8;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  .field:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+  }
+
+  .required {
+    color: #e53e3e;
+    margin-left: 3px;
+  }
+
+  input[type="text"],
+  input[type="date"],
+  select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    color: #1e293b;
+    background: #f8fafc;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input[type="text"]:focus,
+  select:focus {
+    outline: none;
+    border-color: #2e6da4;
+    background: white;
+  }
+
+  .sharigo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sharigo-row select {
+    flex: 1;
+  }
+
+  .sharigo-sep {
+    font-size: 20px;
+    color: #94a3b8;
+    font-weight: 300;
+  }
+
+  /* 良否ボタン */
+  .status-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .status-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: #64748b;
+  }
+
+  .status-btn.good.active {
+    border-color: #16a34a;
+    background: #f0fdf4;
+    color: #16a34a;
+  }
+
+  .status-btn.bad.active {
+    border-color: #dc2626;
+    background: #fef2f2;
+    color: #dc2626;
+  }
+
+  .status-btn:hover:not(.active) {
+    border-color: #94a3b8;
+    background: #f1f5f9;
+  }
+
+  /* 写真エリア */
+  .photo-area {
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 16px;
+    background: #f8fafc;
+  }
+
+  .photo-area textarea {
+    width: 100%;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1e293b;
+    background: white;
+    resize: vertical;
+    min-height: 72px;
+    margin-bottom: 10px;
+  }
+
+  .photo-area textarea:focus {
+    outline: none;
+    border-color: #2e6da4;
+  }
+
+  .photo-btn {
+    width: 100%;
+    padding: 11px;
+    border: 1.5px solid #2e6da4;
+    border-radius: 8px;
+    background: white;
+    color: #2e6da4;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+
+  .photo-btn:hover {
+    background: #f0f7ff;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .photo-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .photo-preview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+  }
+
+  /* 登録ボタン */
+  .footer {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 20px 24px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: #1a3a5c;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+  }
+
+  .submit-btn:hover {
+    background: #2e6da4;
+  }
+
+  /* モーダル */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.show {
+    display: flex;
+  }
+
+  .modal {
+    background: white;
+    border-radius: 14px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+  }
+
+  .modal-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .modal h2 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+  }
+
+  .modal p {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .modal-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .modal-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+
+  .modal-btn:hover { opacity: 0.85; }
+
+  .modal-btn.cancel {
+    background: #f1f5f9;
+    color: #64748b;
+  }
+
+  .modal-btn.confirm {
+    background: #1a3a5c;
+    color: white;
+  }
+
+  /* 完了モーダル */
+  .done-modal .modal-icon { font-size: 48px; }
+  .done-modal h2 { color: #16a34a; }
+  .done-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: #1a3a5c;
+    color: white;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="header-icon">🚃</div>
+    <div>
+      <h1>車両清掃チェックシート</h1>
+      <p>作業完了後に各項目を入力してください</p>
+    </div>
+  </header>
+
+  <!-- 基本情報 -->
+  <div class="card">
+    <div class="section-label">基本情報</div>
+
+    <div class="field">
+      <label>日付</label>
+      <input type="text" id="date" readonly style="background:#f1f5f9; color:#64748b;">
+    </div>
+
+    <div class="field">
+      <label>車号<span class="required">*</span></label>
+      <div class="sharigo-row">
+        <select id="sharigo1">
+          <option value="">-</option>
+          <option>1</option><option>2</option><option>3</option>
+          <option>4</option><option>5</option><option>6</option>
+          <option>7</option><option>8</option><option>9</option>
+        </select>
+        <span class="sharigo-sep">−</span>
+        <select id="sharigo2">
+          <option value="">-</option>
+          <option>1</option><option>2</option><option>3</option>
+          <option>4</option><option>5</option><option>6</option>
+          <option>7</option><option>8</option><option>9</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>確認者<span class="required">*</span></label>
+      <input type="text" id="checker" placeholder="氏名を入力">
+    </div>
+  </div>
+
+  <!-- チェック項目 -->
+  <div class="card">
+    <div class="section-label">清掃状態チェック</div>
+
+    <div class="field">
+      <label>1. 壁の状態<span class="required">*</span></label>
+      <div class="status-group">
+        <button class="status-btn good" onclick="setStatus('wall', 'good')">✓ 良</button>
+        <button class="status-btn bad" onclick="setStatus('wall', 'bad')">✗ 否</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>2. 床の状態<span class="required">*</span></label>
+      <div class="status-group">
+        <button class="status-btn good" onclick="setStatus('floor', 'good')">✓ 良</button>
+        <button class="status-btn bad" onclick="setStatus('floor', 'bad')">✗ 否</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>3. 窓の状態<span class="required">*</span></label>
+      <div class="status-group">
+        <button class="status-btn good" onclick="setStatus('window', 'good')">✓ 良</button>
+        <button class="status-btn bad" onclick="setStatus('window', 'bad')">✗ 否</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- その他 -->
+  <div class="card">
+    <div class="section-label">4. その他・落とせない汚れ</div>
+    <div class="photo-area">
+      <textarea id="memo" placeholder="落とせない汚れの内容を入力してください"></textarea>
+      <button class="photo-btn" onclick="document.getElementById('photoInput').click()">
+        📷 写真を撮影・追加
+      </button>
+      <input type="file" id="photoInput" accept="image/*" capture="environment" multiple onchange="addPhotos(event)">
+      <div class="photo-preview" id="photoPreview"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="submit-btn" onclick="openConfirm()">登録する</button>
+  </div>
+
+</div>
+
+<!-- 確認モーダル -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <div class="modal-icon">📋</div>
+    <h2>登録しますか？</h2>
+    <p>入力内容を登録します。<br>よろしいですか？</p>
+    <div class="modal-buttons">
+      <button class="modal-btn cancel" onclick="closeConfirm()">いいえ</button>
+      <button class="modal-btn confirm" onclick="doRegister()">はい</button>
+    </div>
+  </div>
+</div>
+
+<!-- 完了モーダル -->
+<div class="modal-overlay" id="doneModal">
+  <div class="modal done-modal">
+    <div class="modal-icon">✅</div>
+    <h2>登録しました</h2>
+    <p>チェックシートの登録が<br>完了しました。</p>
+    <button class="done-btn" onclick="closeDone()">閉じる</button>
+  </div>
+</div>
+
+<script>
+  const statusValues = { wall: null, floor: null, window: null };
+
+  // 今日の日付をセット
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth() + 1).padStart(2, '0');
+  const d = String(today.getDate()).padStart(2, '0');
+  document.getElementById('date').value = `${y}年${m}月${d}日`;
+
+  function setStatus(field, value) {
+    statusValues[field] = value;
+    const group = event.target.closest('.status-group');
+    group.querySelectorAll('.status-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+  }
+
+  function addPhotos(event) {
+    const preview = document.getElementById('photoPreview');
+    const files = event.target.files;
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function openConfirm() {
+    // バリデーション
+    const s1 = document.getElementById('sharigo1').value;
+    const s2 = document.getElementById('sharigo2').value;
+    const checker = document.getElementById('checker').value.trim();
+
+    if (!s1 || !s2) {
+      alert('車号を選択してください。');
+      return;
+    }
+    if (!checker) {
+      alert('確認者を入力してください。');
+      return;
+    }
+    if (!statusValues.wall || !statusValues.floor || !statusValues.window) {
+      alert('壁・床・窓の状態をすべて選択してください。');
+      return;
+    }
+
+    document.getElementById('confirmModal').classList.add('show');
+  }
+
+  function closeConfirm() {
+    document.getElementById('confirmModal').classList.remove('show');
+  }
+
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwfWGj2PQOHYsW2bEFXLS7VASImoPc25RnUiRMgFMZ3Lr6V5dj28SgCYFvY5iA58cR0sQ/exec";
+
+  async function doRegister() {
+    closeConfirm();
+
+    const data = {
+      date: document.getElementById('date').value,
+      sharigo: document.getElementById('sharigo1').value + '-' + document.getElementById('sharigo2').value,
+      checker: document.getElementById('checker').value.trim(),
+      wall: statusValues.wall === 'good' ? '良' : '否',
+      floor: statusValues.floor === 'good' ? '良' : '否',
+      window: statusValues.window === 'good' ? '良' : '否',
+      memo: document.getElementById('memo').value.trim(),
+    };
+
+    try {
+      await fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+    } catch(e) {
+      console.log(e);
+    }
+
+    document.getElementById('doneModal').classList.add('show');
+  }
+
+  function closeDone() {
+    document.getElementById('doneModal').classList.remove('show');
+  }
+</script>
+
+</body>
+</html>
