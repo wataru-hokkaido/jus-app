@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JUSアプリ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Hiragino Sans", "Meiryo", sans-serif;
+    background: #0f1f35;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* ログイン画面 */
+  .login-wrap {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .login-logo .icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .login-logo h1 {
+    color: white;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .login-logo p {
+    color: #6b8aaa;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  .login-card {
+    background: #1a3a5c;
+    border-radius: 16px;
+    padding: 28px 24px;
+  }
+
+  .login-card label {
+    display: block;
+    color: #a8c4e0;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .login-card input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #2e5a8a;
+    border-radius: 8px;
+    background: #0f2a45;
+    color: white;
+    font-size: 16px;
+    font-family: inherit;
+    letter-spacing: 0.1em;
+    transition: border-color 0.2s;
+  }
+
+  .login-card input:focus {
+    outline: none;
+    border-color: #4a9eda;
+  }
+
+  .login-card input::placeholder {
+    color: #3a5a7a;
+    letter-spacing: 0.05em;
+  }
+
+  .error-msg {
+    color: #f87171;
+    font-size: 13px;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .login-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    background: #2e6da4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+  }
+
+  .login-btn:hover {
+    background: #4a9eda;
+  }
+
+  /* メニュー画面 */
+  .menu-wrap {
+    display: none;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .menu-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .menu-header .icon {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .menu-header h1 {
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .menu-header p {
+    color: #6b8aaa;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .menu-section {
+    margin-bottom: 20px;
+  }
+
+  .menu-section-label {
+    color: #6b8aaa;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-left: 4px;
+  }
+
+  .menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 18px 20px;
+    background: #1a3a5c;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: background 0.15s;
+  }
+
+  .menu-btn:hover {
+    background: #2e5a8a;
+  }
+
+  .menu-btn .btn-icon {
+    width: 44px;
+    height: 44px;
+    background: #0f2a45;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .menu-btn .btn-text {
+    text-align: left;
+  }
+
+  .menu-btn .btn-title {
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .menu-btn .btn-desc {
+    color: #6b8aaa;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  .menu-btn .btn-arrow {
+    margin-left: auto;
+    color: #6b8aaa;
+    font-size: 18px;
+  }
+
+  .logout-btn {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid #2e5a8a;
+    border-radius: 8px;
+    color: #6b8aaa;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.15s;
+  }
+
+  .logout-btn:hover {
+    border-color: #4a9eda;
+    color: #a8c4e0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ログイン画面 -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-logo">
+    <span class="icon">🚃</span>
+    <h1>JUS 業務アプリ</h1>
+    <p>北海道ジェイ・アール運輸サポート</p>
+  </div>
+  <div class="login-card">
+    <label>パスワード</label>
+    <input type="password" id="passwordInput" placeholder="パスワードを入力" onkeydown="if(event.key==='Enter')login()">
+    <div class="error-msg" id="errorMsg">パスワードが違います</div>
+    <button class="login-btn" onclick="login()">ログイン</button>
+  </div>
+</div>
+
+<!-- メニュー画面 -->
+<div class="menu-wrap" id="menuWrap">
+  <div class="menu-header">
+    <span class="icon">🚃</span>
+    <h1>JUS 業務アプリ</h1>
+    <p>北海道ジェイ・アール運輸サポート</p>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-section-label">チェックシート</div>
+    <a class="menu-btn" href="cleaning_check.html">
+      <div class="btn-icon">🧹</div>
+      <div class="btn-text">
+        <div class="btn-title">車両清掃チェックシート</div>
+        <div class="btn-desc">清掃完了後の状態確認・記録</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-section-label">管理者メニュー</div>
+    <a class="menu-btn" href="#" onclick="alert('準備中です')">
+      <div class="btn-icon">⚙️</div>
+      <div class="btn-text">
+        <div class="btn-title">マスタ管理</div>
+        <div class="btn-desc">車両・清掃項目の追加・編集</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+  </div>
+
+  <button class="logout-btn" onclick="logout()">ログアウト</button>
+</div>
+
+<script>
+  const PASSWORD = "JUS2525";
+
+  function login() {
+    const input = document.getElementById('passwordInput').value;
+    if (input === PASSWORD) {
+      document.getElementById('loginWrap').style.display = 'none';
+      document.getElementById('menuWrap').style.display = 'block';
+      sessionStorage.setItem('auth', 'true');
+    } else {
+      document.getElementById('errorMsg').style.display = 'block';
+      document.getElementById('passwordInput').value = '';
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem('auth');
+    document.getElementById('menuWrap').style.display = 'none';
+    document.getElementById('loginWrap').style.display = 'block';
+    document.getElementById('passwordInput').value = '';
+  }
+
+  // セッション維持
+  if (sessionStorage.getItem('auth') === 'true') {
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('menuWrap').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
